@@ -1,17 +1,18 @@
 fileFormatVersion: 2
 guid: 60670af97b6379e4d85356fc338f6e13
-timeCreated: 1489238912
+timeCreated: 1489253519
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: default
+    100000: Plane
     100002: //RootNode
-    400000: default
+    400000: Plane
     400002: //RootNode
-    2300000: default
-    3300000: default
-    4300000: default
+    2300000: Plane
+    3300000: Plane
+    4300000: Plane
+    6400000: Plane
   materials:
     importMaterials: 1
     materialName: 0
@@ -38,7 +39,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0

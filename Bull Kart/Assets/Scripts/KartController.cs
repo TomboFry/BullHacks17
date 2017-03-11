@@ -16,7 +16,10 @@ public class KartController : MonoBehaviour {
 	private Rigidbody rigidBody;
 
 	void Update() {
-		throttleInput = Input.GetAxis("throttle_" + playernumber);
+		throttleInput = -Input.GetAxis("throttle_" + playernumber);
+
+		print (throttleInput);
+
 		turnInput = Input.GetAxis("steering_" + playernumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
