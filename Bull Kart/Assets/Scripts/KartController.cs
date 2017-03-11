@@ -15,8 +15,8 @@ public class KartController : MonoBehaviour {
 	private Rigidbody rigidBody;
 
 	void Update() {
-		throttleInput = Input.GetAxis("Vertical");
-		turnInput = Input.GetAxis("Horizontal");
+		throttleInput = Input.GetAxis("throttle_1");
+		turnInput = Input.GetAxis("steering_1");
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
 			velocity += throttleInput * acceleration;
