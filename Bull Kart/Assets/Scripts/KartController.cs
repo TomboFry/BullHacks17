@@ -25,11 +25,12 @@ public class KartController : MonoBehaviour {
 		}
 
 		velocity = Mathf.Clamp(velocity, (-maxSpeed / 4), maxSpeed);
-		steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
-
-		print(velocity + ", " + steeringAngle);
-
 		transform.Translate(Vector3.forward * (velocity / 3.6f) * Time.deltaTime);
+
+		Quaternion rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, Time.deltaTime * 20.0f);
+		transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, transform.rotation.eulerAngles.y, rotation.eulerAngles.z);
+
+		steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
 		transform.Rotate(Vector3.up * steeringAngle * Time.deltaTime);
 	}
 }
