@@ -7,6 +7,7 @@ public class KartController : MonoBehaviour {
 	public float acceleration = 1.0f;
 	public float maxSpeed = 20.0f;
 	public float turnSpeed = 5.0f;
+    public int playernumber = 0;
 
 	private float velocity;
 	private float steeringAngle;
@@ -15,8 +16,8 @@ public class KartController : MonoBehaviour {
 	private Rigidbody rigidBody;
 
 	void Update() {
-		throttleInput = Input.GetAxis("throttle_1");
-		turnInput = Input.GetAxis("steering_1");
+		throttleInput = Input.GetAxis("throttle_" + playernumber);
+		turnInput = Input.GetAxis("steering_" + playernumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
 			velocity += throttleInput * acceleration;
