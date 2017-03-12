@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 enum State {
 	PRE,
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour {
 
 	public Spline spline;
 	public KartController[] karts;
+	public Text goFinishText;
 
 	public int laps = 3;
 	public int countdown = 3;
@@ -41,10 +43,21 @@ public class PlayerController : MonoBehaviour {
 				}
 			} else if (Time.timeSinceLevelLoad - lastCountdownTick > 1.0f) {
 				lastCountdownTick = Time.timeSinceLevelLoad;
-				print(countdown--);
+
+				if (countdown > 0) {
+					goFinishText.text = countdown.ToString();
+				} else {
+					goFinishText.text = "GO!";
+				}
+
+				countdown--;
 			}
 			break;
 		case State.RACE:
+			if (Time.timeSinceLevelLoad - lastCountdownTick > 1.0f) {
+				goFinishText.text = "";
+			}
+
 			int position = 0;
 			int finished = 0;
 
@@ -66,11 +79,15 @@ public class PlayerController : MonoBehaviour {
 					break;
 				}
 
-				kart.lapNumText.text = "Lap " + Mathf.Clamp(kart.Lap + 1, 1, laps) + " / " + laps;
+				kart.lapNumText.text = "Lap: " + Mathf.Clamp(kart.Lap + 1, 1, laps) + " / " + laps;
                 kart.PlayerPosTxt.text = position.ToString();
                 kart.PlayerPosSuffixTxt.text = positionSuffix;
 
-				if (kart.Lap >= laps) {
+				if (kart.Lap == laps - 1 && countdown == -1) {
+					lastCountdownTick = Time.timeSinceLevelLoad;
+					goFinishText.text = "Last Lap!";
+					countdown--;
+				} else if (kart.Lap >= laps) {
 					finished++;
 					kart.disableInput = true;
 
@@ -85,6 +102,7 @@ public class PlayerController : MonoBehaviour {
 			}
 			break;
 		case State.FINISH:
+			goFinishText.text = "Player " + winner.playerNumber + " wins!";
 			break;
 		}
 	}
