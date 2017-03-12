@@ -11,6 +11,8 @@ public class KartController : MonoBehaviour {
 	public float maxSpeed = 20.0f;
 	public float turnSpeed = 5.0f;
     public int playerNumber = 1;
+	public bool disableInput = false;
+
     public Text lapNumText;
     public Text PlayerPosTxt;
     public Text PlayerPosSuffixTxt;
@@ -52,7 +54,7 @@ public class KartController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetButtonDown("reset_" + playerNumber)) {
+		if (!disableInput && Input.GetButtonDown("reset_" + playerNumber)) {
 			transform.rotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y, 0.0f);
 			velocity = 0.0f;
 			rigidbody.velocity = Vector3.zero;
@@ -60,8 +62,8 @@ public class KartController : MonoBehaviour {
 			return;
 		}
 
-		float throttleInput = -Input.GetAxis("throttle_" + playerNumber);
-		float turnInput = Input.GetAxis("steering_" + playerNumber);
+		float throttleInput = disableInput ? 0.0f : -Input.GetAxis("throttle_" + playerNumber);
+		float turnInput = disableInput ? 0.0f : Input.GetAxis("steering_" + playerNumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
 			velocity += throttleInput * acceleration;

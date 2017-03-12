@@ -20,10 +20,29 @@ public class PlayerController : MonoBehaviour {
 	private State state = State.PRE;
 	private KartController winner;
 
+	private float lastCountdownTick;
+
+	void Start() {
+		lastCountdownTick = Time.timeSinceLevelLoad;
+
+		foreach (KartController kart in karts) {
+			kart.disableInput = true;
+		}
+	}
+
 	void Update() {
 		switch (state) {
 		case State.PRE:
-			state = State.RACE;
+			if (countdown < 0) {
+				state = State.RACE;
+
+				foreach (KartController kart in karts) {
+					kart.disableInput = false;
+				}
+			} else if (Time.timeSinceLevelLoad - lastCountdownTick > 1.0f) {
+				lastCountdownTick = Time.timeSinceLevelLoad;
+				print(countdown--);
+			}
 			break;
 		case State.RACE:
 			int position = 0;
@@ -46,13 +65,17 @@ public class PlayerController : MonoBehaviour {
 					break;
 				}
 
-				kart.lapNumText.text = "Lap " + (kart.Lap + 1) + " / " + laps;
+				kart.lapNumText.text = "Lap " + Mathf.Clamp(kart.Lap + 1, 1, laps) + " / " + laps;
                 kart.PlayerPosTxt.text = position.ToString();
                 kart.PlayerPosSuffixTxt.text = positionSuffix;
 
 				if (kart.Lap >= laps && winner == null) {
 					winner = kart;
 					state = State.FINISH;
+
+					foreach (KartController k in karts) {
+						k.disableInput = true;
+					}
 				}
 			}
 			break;
