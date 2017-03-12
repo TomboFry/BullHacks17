@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class KartController : MonoBehaviour {
 
+	public PlayerController playerController;
 	public float acceleration = 1.0f;
 	public float maxSpeed = 20.0f;
 	public float turnSpeed = 5.0f;
@@ -17,9 +19,6 @@ public class KartController : MonoBehaviour {
 
 	void Update() {
 		throttleInput = -Input.GetAxis("throttle_" + playernumber);
-
-		print (throttleInput);
-
 		turnInput = Input.GetAxis("steering_" + playernumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
@@ -36,5 +35,19 @@ public class KartController : MonoBehaviour {
 
 		steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
 		transform.Rotate(Vector3.up * steeringAngle * Time.deltaTime);
+	}
+}
+
+[CustomEditor(typeof(KartController))]
+public class KartControllerInspector : Editor {
+
+	void OnSceneGUI() {
+		KartController kartController = target as KartController;
+
+		Spline spline = kartController.playerController.spline;
+		Vector3 kartPosition = kartController.transform.position;
+
+		Handles.color = Color.cyan;
+		Handles.DrawLine(kartPosition, spline.GetClosestPoint(kartPosition));
 	}
 }

@@ -8,10 +8,24 @@ public class Spline : MonoBehaviour {
 
 	public Vector3[] points;
 
-	public int LineCount {
+	public int SegmentCount {
 		get {
 			return points.Length - 1;
 		}
+	}
+
+	public float TotalLength { get; private set; }
+
+	public void UpdateTotalLength() {
+		TotalLength = 0.0f;
+
+		for (int i = 0; i < SegmentCount; i++) {
+			TotalLength += Vector3.Distance(points[i], points[i + 1]);
+		}
+	}
+
+	void Start() {
+		UpdateTotalLength();
 	}
 
 	public void AddSegment() {
@@ -19,29 +33,74 @@ public class Spline : MonoBehaviour {
 		Array.Resize(ref points, points.Length + 1);
 		point.x += 1.0f;
 		points[points.Length - 1] = point;
+		TotalLength += 1.0f;
 	}
 
 	public void RemoveSegment() {
 		if (points.Length > 1) {
+			TotalLength -= Vector3.Distance(points[points.Length - 1], points[points.Length - 2]);
 			Array.Resize(ref points, points.Length - 1);
 		}
 	}
 
-	public Vector3 GetPoint(float t) {
-		int i;
+	public float GetPosition(Vector3 point) {
+		float distance = 0.0f;
+		Vector3 position = transform.InverseTransformPoint(GetClosestPoint(point));
 
-		if (t >= 1.0f) {
-			t = 1.0f;
-			i = points.Length - 2;
-		} else {
-			i = (int) (Mathf.Clamp01(t) * LineCount);
-			t -= i;
+		for (int i = 0; i < SegmentCount; i++) {
+			Vector3 p0 = points[i];
+			Vector3 p1 = points[i + 1];
+
+			float segmentLength = Vector3.Distance(p0, p1);
+			float d = Vector3.Distance(p0, position);
+
+			if (segmentLength > d) {
+				distance += d;
+				break;
+			}
+
+			distance += segmentLength;
 		}
 
-		return transform.TransformPoint(Vector3.Lerp(points[i], points[i + 1], t));
+		return distance / TotalLength;
 	}
 
-	public void Reset () {
+	public Vector3 GetClosestPoint(Vector3 point) {
+		point = transform.InverseTransformPoint(point);
+
+		float minDistance = float.PositiveInfinity;
+		Vector3 closestPoint = points[0];
+
+		for (int i = 0; i < SegmentCount; i++) {
+			Vector3 p = GetClosestPointToSegment(point, points[i], points[i + 1]);
+			float distance = Vector3.Distance(point, p);
+
+			if (minDistance > distance) {
+				minDistance = distance;
+				closestPoint = p;
+			}
+		}
+
+		return transform.TransformPoint(closestPoint);
+	}
+
+	private Vector3 GetClosestPointToSegment(Vector3 point, Vector3 p0, Vector3 p1) {
+		Vector3 u = (p1 - p0).normalized;
+		Vector3 v = point - p0;
+
+		float d = Vector3.Distance(p0, p1);
+		float t = Vector3.Dot(u, v);
+
+		if (t <= 0) {
+			return p0;
+		} else if (t >= d) {
+			return p1;
+		}
+
+		return p0 + (u * t);
+	}
+
+	public void Reset() {
 		points = new Vector3[] {
 			new Vector3(0.0f, 0.0f, 0.0f),
 			new Vector3(1.0f, 0.0f, 0.0f)
@@ -64,7 +123,7 @@ public class SplineInspector : Editor {
 	public override void OnInspectorGUI() {
 		spline = target as Spline;
 
-		if (selectedIndex >= 0 && selectedIndex < spline.points.Length - 1) {
+		if (selectedIndex >= 0 && selectedIndex < spline.points.Length) {
 			DrawSelectedPointInspector();
 		}
 
@@ -89,6 +148,7 @@ public class SplineInspector : Editor {
 			Undo.RecordObject(spline, "Move Point");
 			EditorUtility.SetDirty(spline);
 			spline.points[selectedIndex] = point;
+			spline.UpdateTotalLength();
 		}
 	}
 
@@ -100,10 +160,10 @@ public class SplineInspector : Editor {
 
 		Vector3 p0 = ShowPoint(0);
 
-		for (int i = 1; i < spline.points.Length - 1; i++) {
+		for (int i = 1; i < spline.points.Length; i++) {
 			Vector3 p1 = ShowPoint(i);
 
-			Handles.color = Color.gray;
+			Handles.color = Color.magenta;
 			Handles.DrawLine(p0, p1);
 
 			p0 = p1;
@@ -129,6 +189,7 @@ public class SplineInspector : Editor {
 				Undo.RecordObject(spline, "Move Point");
 				EditorUtility.SetDirty(spline);
 				spline.points[index] = handleTransform.InverseTransformPoint(point);
+				spline.UpdateTotalLength();
 			}
 		}
 
