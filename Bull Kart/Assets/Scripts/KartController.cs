@@ -26,6 +26,11 @@ public class KartController : MonoBehaviour {
 	private float turnInput;
 	private float lastSplinePosition = 0.0f;
 
+	void Start() {
+		var rigidbody = GetComponent<Rigidbody> ();
+		rigidbody.centerOfMass = new Vector3 (0, -0.75f, 0);
+	}
+
 	void Update() {
 		throttleInput = -Input.GetAxis("throttle_" + playerNumber);
 		turnInput = Input.GetAxis("steering_" + playerNumber);
