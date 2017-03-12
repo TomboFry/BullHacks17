@@ -8,19 +8,29 @@ public class Spline : MonoBehaviour {
 
 	public Vector3[] points;
 
+	public bool circuit;
+
 	public int SegmentCount {
 		get {
-			return points.Length - 1;
+			return circuit ? points.Length : points.Length - 1;
 		}
 	}
 
 	public float TotalLength { get; private set; }
 
+	public Vector3 GetPoint(int index) {
+		return points[index % points.Length];
+	}
+
+	public void SetPoint(int index, Vector3 point) {
+		points[index % points.Length] = point;
+	}
+
 	public void UpdateTotalLength() {
 		TotalLength = 0.0f;
 
 		for (int i = 0; i < SegmentCount; i++) {
-			TotalLength += Vector3.Distance(points[i], points[i + 1]);
+			TotalLength += Vector3.Distance(GetPoint(i), GetPoint(i + 1));
 		}
 	}
 
@@ -48,13 +58,13 @@ public class Spline : MonoBehaviour {
 		Vector3 position = transform.InverseTransformPoint(GetClosestPoint(point));
 
 		for (int i = 0; i < SegmentCount; i++) {
-			Vector3 p0 = points[i];
-			Vector3 p1 = points[i + 1];
+			Vector3 p0 = GetPoint(i);
+			Vector3 p1 = GetPoint(i + 1);
 
 			float segmentLength = Vector3.Distance(p0, p1);
 			float d = Vector3.Distance(p0, position);
 
-			if (segmentLength > d) {
+			if (Mathf.Abs(segmentLength - (d + Vector3.Distance(position, p1))) < 0.05f) {
 				distance += d;
 				break;
 			}
@@ -72,7 +82,7 @@ public class Spline : MonoBehaviour {
 		Vector3 closestPoint = points[0];
 
 		for (int i = 0; i < SegmentCount; i++) {
-			Vector3 p = GetClosestPointToSegment(point, points[i], points[i + 1]);
+			Vector3 p = GetClosestPointToSegment(point, GetPoint(i), GetPoint(i + 1));
 			float distance = Vector3.Distance(point, p);
 
 			if (minDistance > distance) {
@@ -101,9 +111,9 @@ public class Spline : MonoBehaviour {
 	}
 
 	public void Reset() {
+		circuit = false;
 		points = new Vector3[] {
-			new Vector3(0.0f, 0.0f, 0.0f),
-			new Vector3(1.0f, 0.0f, 0.0f)
+			new Vector3(0.0f, 0.0f, 0.0f)
 		};
 	}
 }
@@ -127,10 +137,15 @@ public class SplineInspector : Editor {
 			DrawSelectedPointInspector();
 		}
 
-		if (GUILayout.Button ("Add Segment")) {
-			Undo.RecordObject(spline, "Add Segment");
-			spline.AddSegment();
+		if (GUILayout.Button("Toggle Circuit")) {
+			Undo.RecordObject(spline, "Toggle Circuit");
+			spline.circuit = !spline.circuit;
 			EditorUtility.SetDirty(spline);
+		} else if (GUILayout.Button("Add Segment")) {
+			Undo.RecordObject(spline, "Add Segment");
+			EditorUtility.SetDirty(spline);
+			selectedIndex = spline.points.Length;
+			spline.AddSegment();
 		} else if (GUILayout.Button("Remove Segment")) {
 			Undo.RecordObject(spline, "Remove Segment");
 			EditorUtility.SetDirty(spline);
@@ -142,12 +157,12 @@ public class SplineInspector : Editor {
 	private void DrawSelectedPointInspector() {
 		GUILayout.Label("Selected Point");
 		EditorGUI.BeginChangeCheck();
-		Vector3 point = EditorGUILayout.Vector3Field("Position", spline.points[selectedIndex]);
+		Vector3 point = EditorGUILayout.Vector3Field("Position", spline.GetPoint(selectedIndex));
 
 		if (EditorGUI.EndChangeCheck()) {
 			Undo.RecordObject(spline, "Move Point");
 			EditorUtility.SetDirty(spline);
-			spline.points[selectedIndex] = point;
+			spline.SetPoint(selectedIndex, point);
 			spline.UpdateTotalLength();
 		}
 	}
@@ -160,7 +175,7 @@ public class SplineInspector : Editor {
 
 		Vector3 p0 = ShowPoint(0);
 
-		for (int i = 1; i < spline.points.Length; i++) {
+		for (int i = 1; i <= spline.SegmentCount; i++) {
 			Vector3 p1 = ShowPoint(i);
 
 			Handles.color = Color.magenta;
@@ -171,7 +186,7 @@ public class SplineInspector : Editor {
 	}
 
 	private Vector3 ShowPoint(int index) {
-		Vector3 point = handleTransform.TransformPoint(spline.points[index]);
+		Vector3 point = handleTransform.TransformPoint(spline.GetPoint(index));
 
 		Handles.color = Color.white;
 		float size = HandleUtility.GetHandleSize(point);
@@ -188,7 +203,7 @@ public class SplineInspector : Editor {
 			if (EditorGUI.EndChangeCheck()) {
 				Undo.RecordObject(spline, "Move Point");
 				EditorUtility.SetDirty(spline);
-				spline.points[index] = handleTransform.InverseTransformPoint(point);
+				spline.SetPoint(index, handleTransform.InverseTransformPoint(point));
 				spline.UpdateTotalLength();
 			}
 		}

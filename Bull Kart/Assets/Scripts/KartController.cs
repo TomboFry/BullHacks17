@@ -11,11 +11,19 @@ public class KartController : MonoBehaviour {
 	public float turnSpeed = 5.0f;
     public int playernumber = 0;
 
+	public float SplinePosition {
+		get {
+			return playerController.spline.GetPosition(transform.position);
+		}
+	}
+
+	public int Lap { get; private set; }
+
 	private float velocity;
 	private float steeringAngle;
 	private float throttleInput;
 	private float turnInput;
-	private Rigidbody rigidBody;
+	private float lastSplinePosition = 0.0f;
 
 	void Update() {
 		throttleInput = -Input.GetAxis("throttle_" + playernumber);
@@ -35,6 +43,14 @@ public class KartController : MonoBehaviour {
 
 		steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
 		transform.Rotate(Vector3.up * steeringAngle * Time.deltaTime);
+
+		float splinePosition = SplinePosition;
+
+		if (lastSplinePosition > 0.95f && splinePosition < 0.05f) {
+			Lap += 1;
+		}
+
+		lastSplinePosition = splinePosition;
 	}
 }
 
