@@ -18,6 +18,7 @@ public class KartController : MonoBehaviour {
     public Text lapNumText;
     public Text PlayerPosTxt;
     public Text PlayerPosSuffixTxt;
+	public Text boostUseText;
 
 	public float SplinePosition {
 		get {
@@ -73,6 +74,8 @@ public class KartController : MonoBehaviour {
 		} else {
 			velocity = Mathf.Lerp(velocity, 0, 0.05f);
 		}
+
+		boostUseText.text = "Boost: " + pickupUses.ToString();
 
 		if (Input.GetButtonDown("action_" + playerNumber) && powerup != PickupType.NONE) {
 			pickupBoost = true;
