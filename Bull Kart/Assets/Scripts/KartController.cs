@@ -26,9 +26,10 @@ public class KartController : MonoBehaviour {
 	private float lastSplinePosition = 0.0f;
 
 	private Camera camera;
+	private Rigidbody rigidbody;
 
 	void Start() {
-		var rigidbody = GetComponent<Rigidbody>();
+		rigidbody = GetComponent<Rigidbody>();
 		rigidbody.centerOfMass = new Vector3 (0, -0.75f, 0);
 
 		camera = GetComponentInChildren<Camera>();
@@ -50,7 +51,7 @@ public class KartController : MonoBehaviour {
 		if (Input.GetButtonDown("reset_" + playerNumber)) {
 			transform.rotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y, 0.0f);
 			velocity = 0.0f;
-
+			rigidbody.velocity = Vector3.zero;
 			transform.position = playerController.spline.GetClosestPoint(transform.position) + (Vector3.up * 2.0f);
 			return;
 		}
