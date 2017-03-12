@@ -3,10 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+enum State {
+	PRE,
+	RACE,
+	FINISH
+}
+
 public class PlayerController : MonoBehaviour {
 
 	public Spline spline;
 	public KartController[] karts;
+
+	public int laps = 3;
+
+	private State state = State.PRE;
+	private KartController winner;
 
 	void Update() {
 		int position = 1;
@@ -30,6 +41,11 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			// TODO: Update kart position and lap in UI
+
+			if (kart.Lap >= laps && winner == null) {
+				winner = kart;
+				state = State.FINISH;
+			}
 		}
 	}
 }
