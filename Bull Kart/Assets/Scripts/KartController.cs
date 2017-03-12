@@ -12,6 +12,8 @@ public class KartController : MonoBehaviour {
 	public float turnSpeed = 5.0f;
     public int playerNumber = 1;
 	public bool disableInput = false;
+	public PickupType powerup = PickupType.NONE;
+	public int pickupUses = 0;
 
     public Text lapNumText;
     public Text PlayerPosTxt;
@@ -27,6 +29,7 @@ public class KartController : MonoBehaviour {
 
 	private bool canIncrementLap = false;
 	private bool boost = false;
+	private bool pickupBoost = false;
 	private float velocity = 0.0f;
 	private float boostVelocity = 0.0f;
 	private float lastSplinePosition = 0.0f;
@@ -71,8 +74,19 @@ public class KartController : MonoBehaviour {
 			velocity = Mathf.Lerp(velocity, 0, 0.05f);
 		}
 
-		boostVelocity = boost ? 200.0f : Mathf.Lerp(boostVelocity, 0.0f, 0.05f);
+		if (Input.GetButtonDown("action_" + playerNumber) && powerup != PickupType.NONE) {
+			pickupBoost = true;
+			pickupUses--;
+
+			if (pickupUses <= 0) {
+				powerup = PickupType.NONE;
+			}
+		}
+
+		boostVelocity = (boost || pickupBoost) ? 200.0f : Mathf.Lerp(boostVelocity, 0.0f, 0.01f);
 		camera.fieldOfView = 60.0f + (boostVelocity / 5.0f);
+
+		pickupBoost = false;
 
 		velocity = Mathf.Clamp(velocity, (-maxSpeed / 4), maxSpeed);
 		transform.Translate(Vector3.forward * ((velocity + boostVelocity) / 3.6f) * Time.deltaTime);
