@@ -86,7 +86,7 @@ public class KartController : MonoBehaviour {
 			}
 		}
 
-		boostVelocity = (boost || pickupBoost) ? 200.0f : Mathf.Lerp(boostVelocity, 0.0f, 0.01f);
+		boostVelocity = (boost || pickupBoost) ? 160.0f : Mathf.Lerp(boostVelocity, 0.0f, 0.01f);
 		camera.fieldOfView = 60.0f + (boostVelocity / 5.0f);
 
 		pickupBoost = false;
