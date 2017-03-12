@@ -19,6 +19,7 @@ public class KartController : MonoBehaviour {
 
 	public int Lap { get; private set; }
 
+	private bool canIncrementLap = false;
 	private float velocity;
 	private float steeringAngle;
 	private float throttleInput;
@@ -46,11 +47,15 @@ public class KartController : MonoBehaviour {
 
 		float splinePosition = SplinePosition;
 
-		if (lastSplinePosition > 0.95f && splinePosition < 0.05f) {
+		if (lastSplinePosition > 0.45f && lastSplinePosition <= 0.5f && splinePosition >= 0.5f && splinePosition < 0.55f) {
+			canIncrementLap = true;
+		} else if (canIncrementLap && lastSplinePosition > 0.95f && lastSplinePosition <= 1.0f && splinePosition >= 0.0f && splinePosition < 0.05f) {
 			Lap += 1;
+			canIncrementLap = false;
 		}
 
 		lastSplinePosition = splinePosition;
+		print(SplinePosition + ", " + Lap);
 	}
 }
 
