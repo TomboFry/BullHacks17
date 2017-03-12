@@ -17,6 +17,11 @@ ModelImporter:
     100018: Plane_006
     100020: Cylinder_001
     100022: Plane_007
+    100024: Cube
+    100026: Cube_001
+    100028: Cube_002
+    100030: Cube_003
+    100032: Plane_008
     400000: Cylinder
     400002: Plane
     400004: //RootNode
@@ -29,6 +34,11 @@ ModelImporter:
     400018: Plane_006
     400020: Cylinder_001
     400022: Plane_007
+    400024: Cube
+    400026: Cube_001
+    400028: Cube_002
+    400030: Cube_003
+    400032: Plane_008
     2300000: Cylinder
     2300002: Plane
     2300004: Plane_001
@@ -40,6 +50,11 @@ ModelImporter:
     2300016: Plane_006
     2300018: Cylinder_001
     2300020: Plane_007
+    2300022: Cube
+    2300024: Cube_001
+    2300026: Cube_002
+    2300028: Cube_003
+    2300030: Plane_008
     3300000: Cylinder
     3300002: Plane
     3300004: Plane_001
@@ -51,6 +66,11 @@ ModelImporter:
     3300016: Plane_006
     3300018: Cylinder_001
     3300020: Plane_007
+    3300022: Cube
+    3300024: Cube_001
+    3300026: Cube_002
+    3300028: Cube_003
+    3300030: Plane_008
     4300000: Cylinder
     4300002: Plane
     4300004: Plane_001
@@ -62,6 +82,11 @@ ModelImporter:
     4300016: Plane_006
     4300018: Cylinder_001
     4300020: Plane_007
+    4300022: Plane_008
+    4300024: Cube_003
+    4300026: Cube_002
+    4300028: Cube_001
+    4300030: Cube
     6400000: Cylinder
     6400002: Plane
     6400004: Plane_001
@@ -73,6 +98,11 @@ ModelImporter:
     6400016: Plane_006
     6400018: Cylinder_001
     6400020: Plane_007
+    6400022: Cube
+    6400024: Cube_001
+    6400026: Cube_002
+    6400028: Cube_003
+    6400030: Plane_008
     7400000: Default Take
     9500000: //RootNode
   materials:
