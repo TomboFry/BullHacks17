@@ -21,9 +21,6 @@ public class KartController : MonoBehaviour {
 
 	private bool canIncrementLap = false;
 	private float velocity;
-	private float steeringAngle;
-	private float throttleInput;
-	private float turnInput;
 	private float lastSplinePosition = 0.0f;
 
 	void Start() {
@@ -32,8 +29,16 @@ public class KartController : MonoBehaviour {
 	}
 
 	void Update() {
-		throttleInput = -Input.GetAxis("throttle_" + playerNumber);
-		turnInput = Input.GetAxis("steering_" + playerNumber);
+		if (Input.GetButtonDown("reset_" + playerNumber)) {
+			transform.rotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y, 0.0f);
+			velocity = 0.0f;
+
+			transform.position = playerController.spline.GetClosestPoint(transform.position) + (Vector3.up * 2.0f);
+			return;
+		}
+
+		float throttleInput = -Input.GetAxis("throttle_" + playerNumber);
+		float turnInput = Input.GetAxis("steering_" + playerNumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
 			velocity += throttleInput * acceleration;
@@ -47,7 +52,7 @@ public class KartController : MonoBehaviour {
 		Quaternion rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, Time.deltaTime * 20.0f);
 		transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, transform.rotation.eulerAngles.y, rotation.eulerAngles.z);
 
-		steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
+		float steeringAngle = turnInput * (((maxSpeed - velocity) / maxSpeed) + 1.0f) * turnSpeed;
 		transform.Rotate(Vector3.up * steeringAngle * Time.deltaTime);
 
 		float splinePosition = SplinePosition;
