@@ -9,7 +9,7 @@ public class KartController : MonoBehaviour {
 	public float acceleration = 1.0f;
 	public float maxSpeed = 20.0f;
 	public float turnSpeed = 5.0f;
-    public int playernumber = 0;
+    public int playerNumber = 1;
 
 	public float SplinePosition {
 		get {
@@ -26,8 +26,8 @@ public class KartController : MonoBehaviour {
 	private float lastSplinePosition = 0.0f;
 
 	void Update() {
-		throttleInput = -Input.GetAxis("throttle_" + playernumber);
-		turnInput = Input.GetAxis("steering_" + playernumber);
+		throttleInput = -Input.GetAxis("throttle_" + playerNumber);
+		turnInput = Input.GetAxis("steering_" + playerNumber);
 
 		if (Mathf.Abs(throttleInput) > 0.05f) {
 			velocity += throttleInput * acceleration;
