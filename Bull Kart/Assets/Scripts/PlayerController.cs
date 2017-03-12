@@ -23,14 +23,15 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		switch (state) {
 		case State.PRE:
+			state = State.RACE;
 			break;
 		case State.RACE:
-			int position = 1;
+			int position = 0;
 
 			foreach (KartController kart in karts.OrderByDescending(kart => kart.Lap).ThenByDescending(kart => kart.SplinePosition)) {
 				string positionSuffix;
                 
-				switch (position++) {
+				switch (++position) {
 				case 1:
 					positionSuffix = "st";
 					break;
@@ -45,8 +46,7 @@ public class PlayerController : MonoBehaviour {
 					break;
 				}
 
-                // TODO: Update kart position and lap in UI
-                kart.lapNumText.text = "Lap " + kart.Lap + " / " + laps;
+				kart.lapNumText.text = "Lap " + (kart.Lap + 1) + " / " + laps;
                 kart.PlayerPosTxt.text = position.ToString();
                 kart.PlayerPosSuffixTxt.text = positionSuffix;
 
