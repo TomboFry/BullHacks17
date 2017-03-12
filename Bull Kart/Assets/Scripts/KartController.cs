@@ -20,12 +20,30 @@ public class KartController : MonoBehaviour {
 	public int Lap { get; private set; }
 
 	private bool canIncrementLap = false;
-	private float velocity;
+	private bool boost = false;
+	private float velocity = 0.0f;
+	private float boostVelocity = 0.0f;
 	private float lastSplinePosition = 0.0f;
 
+	private Camera camera;
+
 	void Start() {
-		var rigidbody = GetComponent<Rigidbody> ();
+		var rigidbody = GetComponent<Rigidbody>();
 		rigidbody.centerOfMass = new Vector3 (0, -0.75f, 0);
+
+		camera = GetComponentInChildren<Camera>();
+	}
+
+	void OnCollisionStay(Collision collisionInfo) {
+		SpeedBooster booster = collisionInfo.gameObject.GetComponent<SpeedBooster>();
+
+		if (booster) {
+			boost = true;
+		}
+	}
+
+	void OnCollisionExit() {
+		boost = false;
 	}
 
 	void Update() {
@@ -46,8 +64,11 @@ public class KartController : MonoBehaviour {
 			velocity = Mathf.Lerp(velocity, 0, 0.05f);
 		}
 
+		boostVelocity = boost ? 200.0f : Mathf.Lerp(boostVelocity, 0.0f, 0.05f);
+		camera.fieldOfView = 60.0f + (boostVelocity / 5.0f);
+
 		velocity = Mathf.Clamp(velocity, (-maxSpeed / 4), maxSpeed);
-		transform.Translate(Vector3.forward * (velocity / 3.6f) * Time.deltaTime);
+		transform.Translate(Vector3.forward * ((velocity + boostVelocity) / 3.6f) * Time.deltaTime);
 
 		Quaternion rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, Time.deltaTime * 20.0f);
 		transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, transform.rotation.eulerAngles.y, rotation.eulerAngles.z);
@@ -65,7 +86,6 @@ public class KartController : MonoBehaviour {
 		}
 
 		lastSplinePosition = splinePosition;
-		print(SplinePosition + ", " + Lap);
 	}
 }
 
