@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		int position = 1;
 
-		foreach (KartController kart in karts.OrderBy(kart => kart.Lap).ThenByDescending(kart => kart.SplinePosition)) {
+		foreach (KartController kart in karts.OrderByDescending(kart => kart.Lap).ThenByDescending(kart => kart.SplinePosition)) {
 			string positionSuffix;
 
 			switch (position++) {
