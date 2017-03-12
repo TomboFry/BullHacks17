@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviour {
 			break;
 		case State.RACE:
 			int position = 0;
+			int finished = 0;
 
 			foreach (KartController kart in karts.OrderByDescending(kart => kart.Lap).ThenByDescending(kart => kart.SplinePosition)) {
 				string positionSuffix;
@@ -69,14 +70,18 @@ public class PlayerController : MonoBehaviour {
                 kart.PlayerPosTxt.text = position.ToString();
                 kart.PlayerPosSuffixTxt.text = positionSuffix;
 
-				if (kart.Lap >= laps && winner == null) {
-					winner = kart;
-					state = State.FINISH;
+				if (kart.Lap >= laps) {
+					finished++;
+					kart.disableInput = true;
 
-					foreach (KartController k in karts) {
-						k.disableInput = true;
+					if (winner == null) {
+						winner = kart;
 					}
 				}
+			}
+
+			if (finished >= karts.Length) {
+				state = State.FINISH;
 			}
 			break;
 		case State.FINISH:
