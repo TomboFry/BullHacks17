@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour {
 
 			foreach (KartController kart in karts.OrderByDescending(kart => kart.Lap).ThenByDescending(kart => kart.SplinePosition)) {
 				string positionSuffix;
-
+                
 				switch (position++) {
 				case 1:
 					positionSuffix = "st";
@@ -45,7 +45,10 @@ public class PlayerController : MonoBehaviour {
 					break;
 				}
 
-				// TODO: Update kart position and lap in UI
+                // TODO: Update kart position and lap in UI
+                kart.lapNumText.text = "Lap " + kart.Lap + " / " + laps;
+                kart.PlayerPosTxt.text = position.ToString();
+                kart.PlayerPosSuffixTxt.text = positionSuffix;
 
 				if (kart.Lap >= laps && winner == null) {
 					winner = kart;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class KartController : MonoBehaviour {
 
@@ -10,6 +11,9 @@ public class KartController : MonoBehaviour {
 	public float maxSpeed = 20.0f;
 	public float turnSpeed = 5.0f;
     public int playerNumber = 1;
+    public Text lapNumText;
+    public Text PlayerPosTxt;
+    public Text PlayerPosSuffixTxt;
 
 	public float SplinePosition {
 		get {
